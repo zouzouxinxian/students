@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+
+    .login {
+      width: 500px;
+      margin: 50px auto;
+    }
+
+    .login > p {
+      color: red;
+      visibility: hidden;
+    }
+    #button{
+          margin: 0 72px;
+    }
+  </style>
+  </head>
+  <body>
+    <div class="login">
+      <p>用户名或者密码不能为空！</p>
+      用户名：<input  name="name" id="user" placeholder="请输入用户名"><br><br>
+      密&nbsp;&nbsp;&nbsp;码：<input name="passwd" id="passwd" placeholder="请输入密码"><br><br>
+      <button   id="button">登录</button>
+      <button  id="register">注册</button>
+    </div>
+    <script src="/js/jquery.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+
+
+
+      $(function(){
+        $('#button').click(function(){
+
+          var username = $(".login input[name=name]").val();
+          var passwd = $(".login input[name=passwd]").val();
+          console.log(username);
+          if ((!username) || (!passwd)){
+            //如果为空的情况要执行
+            $(".login > p").css("visibility", "visible");
+            return;
+          }
+          $.ajax({
+            url:"/login",
+            method:'post',
+            data:{
+              name:username,
+              passwd:passwd
+            },
+            success:function(data,status,jqXHR){
+              if(status){
+                window.location = "http://127.0.0.1:8000/admin"
+              }else {
+                console.log(status);
+                $(".login input").val("");
+                alert("用户名或密码错误");
+              }
+        		},
+        		error:function(err){
+        			console.log(err);
+        		}
+          });
+       });
+
+        $('#register').click(function(){
+
+          $.ajax({
+            url:"/register",
+            method:"get",
+            success:function(data,status,jqXHR){
+              if (status) {
+                window.location = "http://127.0.0.1:8000/register"
+              }else {
+                console.log(status);
+              }
+            },
+            error:function(status,data,jqXHR){
+              console.log("register error",error);
+            }
+          });
+        });
+      });
+
+
+    </script>
+  </body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>注册</title>
+    <style media="screen">
+    *{
+      margin: 0;
+      padding: 0;
+    }
+      div{
+        width: 500px;
+        margin: 50px auto;
+      }
+       p {
+        color: red;
+        visibility: hidden;
+      }
+      #btn{
+        margin: 10px 196px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register">
+      <p>用户名或密码不能为空！</p>
+      用户名: <input name="name" placeholder="请输入用户名"><br><br>
+      密&nbsp;&nbsp; &nbsp;码: <input  name="passwd" placeholder="请输入密码"><br><br>
+      <button id="btn">注册</button>
+    </div>
+    <script src="/js/jquery.min.js" charset="utf-8"></script>
+    <script type="text/javascript">
+
+      $(function(){
+
+        $("#btn").click(function(){
+
+          var name = $(".register input[name=name]").val();
+          var passwd = $(".register input[name=passwd]").val();
+          console.log(name);
+          if ((!name) || (!passwd)) {
+            $(".register > p").css("visibility","visible");
+            return;
+          }
+          $.ajax({
+            url:"/register",
+            method:'post',
+            data:{
+              name:name,
+              passwd:passwd
+            },
+            success:function(data,status,jqXHR){
+              if (status) {
+                window.location = "http://127.0.0.1:8000/login"
+              }else {
+                console.log(status);
+                alter("注册失败");
+              }
+            },
+            error:function(err){
+              console.log("error",err);
+            }
+          });
+        });
+      });
+    </script>
+  </body>
+</html>

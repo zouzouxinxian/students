@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>admin</title>
+	<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">
+	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>
+	<script src="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+	<style media="screen">
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	table{
+		width: 200px;
+		margin: 20px ;
+		border: 1px solid gray;
+		border-collapse: collapse;
+		text-align: center;
+	}
+	td,th{
+		border: 1px solid gray;
+		height: 30px;
+		text-align: center;
+	}
+
+	</style>
+</head>
+<body>
+<div id="div"></div>
+<ul id="myTab" class="nav nav-tabs">
+	<li class="active">
+		<a href="#add" data-toggle="tab">添加</a>
+	</li>
+	<li>
+    <a href="#delete" data-toggle="tab">删除</a>
+  </li>
+  <li>
+		<a href="#get" data-toggle="tab">查找</a>
+	</li>
+	<li>
+    <a href="#put" data-toggle="tab">更新</a>
+  </li>
+</ul>
+<div id="myTabContent" class="tab-content">
+	<div class="tab-pane fade in active" id="add">
+
+		num: <input type="text" name="add-num" placeholder="请输入学号"><br>
+		姓名: <input type="text"  name="add-name" placeholder="请输入姓名"><br>
+		年龄: <input type="text" name="add-age"  placeholder="请输入年龄"><br>
+	  性别: <input type="text" name="add-gender" placeholder="0或1"><br>
+		<button type="button" id="btn-add">添加</button>
+	</div>
+	<div class="tab-pane fade" id="delete">
+		num: <input type="text" name="delete-num" placeholder="请输入学号"><br>
+		<button type="button" id="delete">删除</button>
+	</div>
+	<div class="tab-pane fade" id="get">
+		num: <input type="text" name="f-num" placeholder="请输入学号">
+		<button type="button"  id="find">查找</button>
+		<table>
+			<thead>
+				<th>NUM</th>
+				<th>姓名</th>
+				<th>年龄</th>
+				<th>性别</th>
+			</thead>
+			<tbody id="tbody"></tbody>
+		</table>
+	</div>
+	<div class="tab-pane fade" id="put">
+		num: <input type="text" name="submit" placeholder="请输入学号">
+		<button type="button" id="submit">提交</button><br><br>
+		姓名: <input type="text" name="uname" placeholder="请输入姓名"><br>
+		年龄: <input type="text" name="uage" placeholder="请输入年龄"><br>
+	  性别: <input type="text" name="ugender" placeholder="0或1"><br>
+		<button type="button" id="update">更新</button>
+	</div>
+</div>
+
+<script src="/js/jquery.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+
+$(function(){
+
+  $('#div').html("<h2>学生管理系统</h2>");
+
+//添加
+	$('#btn-add').click(function(){
+		var num = $("#add input[name=add-num]").val();
+		var name = $("#add input[name=add-name]").val();
+		var age = $("#add input[name=add-age]").val();
+		var gender = $("#add input[name=add-gender]").val();
+		$.ajax({
+			method:"post",
+			url:"/admin/add",
+			data:{
+				num:num,
+				name:name,
+				age:age,
+				gender:gender
+			},
+			success: function(data,status,jqXHR){
+					if(status){
+						$("#add input").val("");
+						alert("添加成功！");
+					}else {
+						alert("添加失败");
+					}
+			},
+			error: function(jqXHR, textStatus, error){
+				console.error("num不能重复",error);
+				alert("添加失败");
+				$("#add input").val("");
+
+			}
+		});
+	});
+
+//删除
+	$("#delete").click(function(){
+		var num = $("#delete input[name=delete-num]").val();
+		$.ajax({
+			method:"post",
+			url:"/admin/delete",
+			data:{
+				num:num,
+			},
+			success: function(data,status,jqXHR){
+					if(status){
+						alert("删除成功");
+						console.log(status);
+						$("#delete input").val("");
+					}else {
+						alert("删除失败");
+						console.log(status);
+					}
+			},
+			error: function(jqXHR,  status, error){
+				console.error(error);
+			}
+		});
+	});
+
+//查找
+	$('#find').click(function(){
+		var num = $("#get input[name=f-num]").val();
+		$.ajax({
+			method:"post",
+			url:"/admin/find",
+			data:{
+				num:num,
+			},
+			success: function(data,status,jqXHR){
+					if(status){
+						var name = data[0].name;
+						var age = data[0].age;
+						var gender = data[0].gender;
+						console.log(name);
+						$("#tbody").append("<tr><td>" + num + "</td><td>" + name + "</td><td>" + age + "</td><td>" + gender + "</td></tr>");
+						$("#get input").val("");
+					}else {
+						alert("查找失败");
+					}
+			},
+			error: function(jqXHR, textStatus, error){
+				console.error(error);
+				alert("查找失败");
+			}
+		});
+	});
+
+//提交
+$("#submit").click(function(){
+	var num = $("#put input[name=submit]").val();
+	$.ajax({
+		method:"post",
+		url:"/admin/update",
+		data:{
+			num:num
+		},
+		success: function(data,status,jqXHR){
+				if(status){
+					 $("#put input").val("");
+				}else {
+					console.log("提交失败");
+				}
+		},
+		error: function(jqXHR, textStatus, error){
+			console.error(error);
+		}
+	});
+});
+//更新
+	$("#update").click(function(){
+		var name = $("#put input[name=uname]").val();
+		var age = $("#put input[name=uage]").val();
+		var gender = $("#put input[name=ugender]").val();
+		$.ajax({
+			method:"get",
+			url:"/admin/update",
+			data:{
+				name:name,
+				age:age,
+				gender:gender
+			},
+			success: function(data,status,jqXHR){
+					if(status){
+						$("#put input").val("");
+						alert("更新成功");
+					}else {
+						console.log("更新失败");
+					}
+			},
+			error: function(jqXHR, textStatus, error){
+				console.error(error);
+			}
+		});
+	});
+});
+
+</script>
+</body>
+</html>
